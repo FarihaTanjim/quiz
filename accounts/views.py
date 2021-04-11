@@ -1,55 +1,28 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from .forms import SignUpForm
 # Create your views here.
 
 from django.contrib.auth import authenticate, login
 
 from django.contrib.auth import logout
 
-
-def login_attempt(request):
-    if request.method == "POST":
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        print(email)
-        user = User.objects.filter(email=email).first()
-        if not user:
-            message = {'error': 'user does not exists'}
-            context = message
-            return render(request, 'auth/login.html', context)
-        user = authenticate(username=email, password=password)
-        print(user)
-        if user is not None:
-            print("login")
-            login(request, user)
-            return redirect('/')
-        else:
-            message = {'error': 'invalid credentials'}
-            context = message
-            return render(request, 'auth/login.html', context)
-    return render(request, 'auth/login.html')
-
-
 def register_attempt(request):
     if request.method == 'POST':
-        f_name = request.POST.get('f_name')
-        l_name = request.POST.get('l_name')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        user = User.objects.filter(email=email).first()
-
-        if user:
-            message = {'error': 'user already exists'}
-            context = message
-            return render(request, 'auth/register.html', context)
-        user = User(first_name=f_name, last_name=l_name, email=email, username=email)
-        user.set_password(password)
-        user.save()
-
-    return render(request, 'auth/register.html')
-
-
-def logout_attempt(request):
-    logout(request)
-    return redirect('/')
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            user.refresh_from_db()  
+            # load the profile instance created by the signal
+            user.save()
+            raw_password = form.cleaned_data.get('password1')
+ 
+            # login user after signing up
+            user = authenticate(username=user.username, password=raw_password)
+            login(request, user)
+ 
+            # redirect user to home page
+            return redirect('home')
+    else:
+        form = SignUpForm()
+    return render(request, 'registration/register.html', {'form': form})
