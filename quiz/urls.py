@@ -22,5 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include(urls)),
     path('accounts/', include('django.contrib.auth.urls')),    
-    path('questions/', include(qurls)),
+    path('', include(qurls)),
 ]

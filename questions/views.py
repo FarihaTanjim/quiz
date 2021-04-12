@@ -15,33 +15,6 @@ def home(request):
     context = {'courses': courses}
     return render(request, 'home.html', context)
 
-
-def api_question(request, id):
-    raw_questions = Question.objects.filter(course=id)[:20]
-    questions = []
-
-    for raw_question in raw_questions:
-        question = {}
-        question['id'] = raw_question.id
-        question['question'] = raw_question.question
-        question['answer'] = raw_question.answer
-        question['marks'] = raw_question.marks
-        options = []
-        options.append(raw_question.option_one)
-        options.append(raw_question.option_two)
-        if raw_question.option_three != '':
-            options.append(raw_question.option_three)
-
-        if raw_question.option_four != '':
-            options.append(raw_question.option_four)
-
-        question['options'] = options
-
-        questions.append(question)
-
-    return JsonResponse(questions, safe=False)
-
-
 @login_required(login_url='/login')
 def view_score(request):
     user = request.user
@@ -52,7 +25,8 @@ def view_score(request):
 
 @login_required(login_url='/login')
 def take_quiz(request, id):
-    context = {'id': id}
+    raw_questions = Question.objects.filter(course =id)[:20]
+    context = {'id': id, 'questions' : raw_questions}
     return render(request, 'quiz.html', context)
 
 
