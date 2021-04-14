@@ -25,10 +25,24 @@ def view_score(request):
 
 @login_required(login_url='/login')
 def take_quiz(request, id):
-    raw_questions = Question.objects.filter(course =id)[:20]
-    context = {'id': id, 'questions' : raw_questions}
-    return render(request, 'quiz.html', context)
+    if request.method == "GET" :
+        raw_questions = Question.objects.filter(course =id)[:20]
+        context = {'id': id, 'questions' : raw_questions}
+        return render(request, 'quiz.html', context)
+    
+    if request.method == "POST":
+        data = request.body
+        user = request.user
+        course = Course.objects.get(id=id)
+        score = 0
+        for solution in solutions:
+            question = Question.objects.filter(id=solution.get('question_id')).first()
 
+            if (question.answer) == solution.get('option'):
+                score = score + question.marks
+
+        score_board = ScoreBoard(course=course, score=score, user=user)
+        score_board.save()
 
 @csrf_exempt
 @login_required(login_url='/login')

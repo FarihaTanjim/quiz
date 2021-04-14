@@ -5,6 +5,27 @@
     <title>Quiz</title>
 </head>
 <body>
-Start quiz!
+    <form method="POST">
+    {% csrf_token %}
+    {% for question in questions %}
+        <label for="MCQ">{{question.question}}</label>
+        </br>
+
+            <input type="radio" id="{{question.id}}.1" name="{{question.id}}" value="1">
+            <label for="{{question.id}}.1">{{question.option_one}}</label><br>
+            <input type="radio" id="{{question.id}}.2" name="{{question.id}}" value="2">
+            <label for="{{question.id}}.2">{{question.option_two}}</label><br>
+            <input type="radio" id="{{question.id}}.3" name="{{question.id}}" value="3">
+            <label for="{{question.id}}.3">{{question.option_three}}</label><br>
+            <input type="radio" id="{{question.id}}.4" name="{{question.id}}" value="4">
+            <label for="{{question.id}}.4">{{question.option_four}}</label> 
+
+        </br>
+
+        {% endfor %}
+        
+        <button type="submit">Submit</button> 
+    </form>
+
 </body>
 </html>
