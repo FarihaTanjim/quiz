@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import *
 from django.http import JsonResponse
 # Create your views here.
@@ -9,21 +9,21 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
-
+@login_required(login_url='/accounts/login')
 def home(request):
     courses = Course.objects.all()
     context = {'courses': courses}
     return render(request, 'home.html', context)
 
-@login_required(login_url='/login')
+@login_required(login_url='/accounts/login')
 def view_score(request):
     user = request.user
     score = ScoreBoard.objects.filter(user=user)
-    context = {'score': score}
+    context = {'scores': score}
     return render(request, 'score.html', context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='/accounts/login')
 def take_quiz(request, id):
     if request.method == "GET" :
         raw_questions = Question.objects.filter(course =id)[:20]
@@ -31,37 +31,18 @@ def take_quiz(request, id):
         return render(request, 'quiz.html', context)
     
     if request.method == "POST":
-        data = request.body
+        data = request.POST
+        print(data)
         user = request.user
         course = Course.objects.get(id=id)
         score = 0
-        for solution in solutions:
-            question = Question.objects.filter(id=solution.get('question_id')).first()
+        for question in Question.objects.filter(course=course):
 
-            if (question.answer) == solution.get('option'):
+            if str(question.answer) == data.get(str(question.id))[0]:
                 score = score + question.marks
 
         score_board = ScoreBoard(course=course, score=score, user=user)
         score_board.save()
 
-@csrf_exempt
-@login_required(login_url='/login')
-def check_score(request):
-    data = json.loads(request.body)
-    user = request.user
-    course_id = data.get('course_id')
-    solutions = json.loads(data.get('data'))
-    course = Course.objects.get(id=course_id)
-    score = 0
-    for solution in solutions:
-        question = Question.objects.filter(id=solution.get('question_id')).first()
-
-        if (question.answer) == solution.get('option'):
-            score = score + question.marks
-
-    score_board = ScoreBoard(course=course, score=score, user=user)
-    score_board.save()
-
-    return JsonResponse({'message': 'success', 'status': True})
-
+        return redirect("/view_score")
 
