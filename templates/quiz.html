@@ -1,23 +1,25 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Quiz</title>
+    
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
 </head>
 <body>
     <form method="POST">
     {% csrf_token %}
     {% for question in questions %}
-        <label for="MCQ">{{question.question}}</label>
+        <label class="question" for="MCQ">{{question.question}}</label>
         </br>
-
-            <input type="radio" id="{{question.id}}.1" name="{{question.id}}" value="1">
+            <input type="radio" id="{{question.id}}.1" name="{{question.id}}" value="1" required>
             <label for="{{question.id}}.1">{{question.option_one}}</label><br>
-            <input type="radio" id="{{question.id}}.2" name="{{question.id}}" value="2">
+            <input type="radio" id="{{question.id}}.2" name="{{question.id}}" value="2" required>
             <label for="{{question.id}}.2">{{question.option_two}}</label><br>
-            <input type="radio" id="{{question.id}}.3" name="{{question.id}}" value="3">
+            <input type="radio" id="{{question.id}}.3" name="{{question.id}}" value="3" required>
             <label for="{{question.id}}.3">{{question.option_three}}</label><br>
-            <input type="radio" id="{{question.id}}.4" name="{{question.id}}" value="4">
+            <input type="radio" id="{{question.id}}.4" name="{{question.id}}" value="4" required>
             <label for="{{question.id}}.4">{{question.option_four}}</label> 
 
         </br>
