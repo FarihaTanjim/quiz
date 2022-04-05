@@ -1,21 +1,16 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    
-    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
     <h2>Log In</h2>
-    <form method="post">
+    <form method="post" class="form">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Log In</button>
+    {{ form|crispy }}
+    <button class="btn btn-success" type="submit">Log In</button>
     </form>
 <div>
 <a href="/accounts/register">Create Account</a>
 </div>
-</body>
-</html>
+
+{% endblock %}

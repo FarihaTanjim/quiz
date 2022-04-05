@@ -9,11 +9,17 @@
 
 
         {% block content %}
+        <h1>
             Hello {{ user.username }} !
-   
+        </h1>
+
+        <h2>
+            Select your course 
+        </h2>
+
             {% for course in courses %}
-                <div>
-                    <a href="/{{course.id}}">{{ course.course_name }}</a>
+                <div class = "list-group">
+                    <a href="/{{course.id}}"  class="list-group-item list-group-item-action">{{ course.course_name }}</a>
                 </div>
             {% endfor %}
         {% endblock %}
